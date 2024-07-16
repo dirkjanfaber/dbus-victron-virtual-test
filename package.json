@@ -1,0 +1,15 @@
+{
+  "name": "dbus-victron-virtual-test",
+  "version": "0.1.0",
+  "description": "testing package dbus-victron-virtual on Venus OS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dbus-native": "^0.4.0",
+    "dbus-victron-virtual": "github:Chris927/dbus-victron-virtual"
+  }
+}
