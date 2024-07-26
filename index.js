@@ -2,7 +2,7 @@ const dbus = require('dbus-native');
 const { addVictronInterfaces } = require('dbus-victron-virtual');
 
 // example adopted from https://github.com/sidorares/dbus-native/blob/master/examples/basic-service.js
-const serviceName = 'com.victronenergy.my-service1';
+const serviceName = 'com.victronenergy.my_service1';
 const interfaceName = serviceName;
 const objectPath = `/${serviceName.replace(/\./g, '/')}`;
 
@@ -34,7 +34,7 @@ sessionBus.requestName(serviceName, 0x4, (err, retCode) => {
   }
 });
 
-function proceed() {
+async function proceed() {
   // First, we need to create our interface description (here we will only expose method calls)
   var ifaceDesc = {
     name: interfaceName,
@@ -88,14 +88,13 @@ function proceed() {
 
   console.log('Interface exposed to DBus, ready to receive function calls!');
 
-  /* 
-  addSettings([
+  const settingsResult = await addSettings([
     { path: '/Settings/Basic2/OptionA', default: 3, min: 0, max: 5 },
     { path: '/Settings/Basic2/OptionB', default: 'x' },
     { path: '/Settings/Basic2/OptionC', default: 'y' },
     { path: '/Settings/Basic2/OptionD', default: 'y' },
   ]);
-  */
+  console.log('settingsResult', JSON.stringify(settingsResult, null, 2));
 
   /*
   removeSettings([
@@ -104,7 +103,7 @@ function proceed() {
   ]);
   */
 
-  setInterval(() => {
+  setInterval(async () => {
 
     // emit a random value (not relevant for our Victron interfaces)
     var rand = Math.round(Math.random() * 100);
@@ -118,14 +117,13 @@ function proceed() {
     emitItemsChanged();
 
     // change a setting programmatically
-    /*
-    setValue({
+    const setValueResult = await setValue({
       path: '/Settings/Basic2/OptionB',
       value: 'changed via SetValue ' + Math.round(Math.random() * 100),
       interface: 'com.victronenergy.BusItem',
       destination: 'com.victronenergy.settings'
     });
-    */
+    console.log('setValueResult', setValueResult);
 
     // or get a configuration value
     // getValue({
