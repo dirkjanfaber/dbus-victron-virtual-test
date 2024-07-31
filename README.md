@@ -2,13 +2,9 @@
 # Manually Test `dbus-victron-virtual`
 
 [dbus-victron-virtual](https://github.com/Chris927/dbus-victron-virtual) is an
-NPM package in development. It is not available on npmjs.com yet. This package
-(dbus-victron-virtual-test) serves as a preliminary, manual test of this
-package in development.
+NPM package in active development. This package (dbus-victron-virtual-test)
+serves as a manual test of this package.
 
-WARNING: Both the package under test and this package are in development,
-experimental, and have known bugs and shortcomings. The API *will change*. Use
-at own risk :)
 
 ## Instructions
 
