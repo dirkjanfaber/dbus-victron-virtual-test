@@ -96,12 +96,11 @@ async function proceed() {
   ]);
   console.log('settingsResult', JSON.stringify(settingsResult, null, 2));
 
-  /*
-  removeSettings([
-    { path: '/Settings/Basic2/OptionC', default: 'y' },
-    { path: '/Settings/Basic2/OptionD', default: 'y' }
+  const removeSettingsResult = await removeSettings([
+    { path: '/Settings/Basic2/OptionC' },
+    { path: '/Settings/Basic2/OptionD' }
   ]);
-  */
+  console.log('removeSettingsResult', JSON.stringify(removeSettingsResult, null, 2));
 
   setInterval(async () => {
 
@@ -126,11 +125,12 @@ async function proceed() {
     console.log('setValueResult', setValueResult);
 
     // or get a configuration value
-    // getValue({
-    //   path: '/Settings/Basic2/OptionB',
-    //   interface: 'com.victronenergy.BusItem',
-    //   destination: 'com.victronenergy.settings'
-    // });
+    const getValueReult = await getValue({
+      path: '/Settings/Basic2/OptionB',
+      interface: 'com.victronenergy.BusItem',
+      destination: 'com.victronenergy.settings'
+    });
+    console.log('getValueResult', JSON.stringify(getValueReult, null, 2));
 
   }, 1000);
 
