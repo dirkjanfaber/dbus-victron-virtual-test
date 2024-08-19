@@ -52,12 +52,16 @@ async function proceed() {
       },
       ProductName: 's',
       Temperature: {
-        type: 'i',
+        type: 'd',
         format: (v) => v.toFixed(1)+'C'
       },
-      Status: 'i',
+      TemperatureType: 'i',
+      Humidity: 'i',
+      Pressure: 'd',
+      Status: 'd',
       DeviceInstance: 'i',
       CustomName: 's',
+      BatteryVoltage: 'd'
     },
     signals: {
     }
@@ -73,9 +77,13 @@ async function proceed() {
     ProductId: 0xC029,
     ProductName: 'Virtual thermometer',
     Temperature: 0,
+    TemperatureType: 2,
+    Humidity: 0,
+    Pressure: 0,
     Status: 0,
     DeviceInstance: 33,
     CustomName: '',
+    BatteryVoltage: 3.3,
     emit: function() {
       // no nothing, as usual
     }
