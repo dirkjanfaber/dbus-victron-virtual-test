@@ -2,7 +2,7 @@ const dbus = require('dbus-native');
 const { addVictronInterfaces } = require('dbus-victron-virtual');
 
 // example adopted from https://github.com/sidorares/dbus-native/blob/master/examples/basic-service.js
-const serviceName = 'com.victronenergy.my_service1';
+const serviceName = 'com.victronenergy.temperature.virtual_dfa';
 const interfaceName = serviceName;
 const objectPath = `/${serviceName.replace(/\./g, '/')}`;
 
@@ -39,35 +39,43 @@ async function proceed() {
   var ifaceDesc = {
     name: interfaceName,
     methods: {
-      // Simple types
-      SayHello: ['', 's', [], ['hello_sentence']],
-      GiveTime: ['', 's', [], ['current_time']],
-      Capitalize: ['s', 's', ['initial_string'], ['capitalized_string']]
     },
     properties: {
-      Flag: 'b',
-      StringProp: 's',
-      RandValue: 'i'
+      Connected: 'i',
+      ProductName: 's',
+      'Mgmt/Connection': 's',
+      'Mgmt/ProcessName': 's',
+      'Mgmt/ProcessVersion': 's',
+      ProductId: {
+        type: 'i',
+        format: (v) => 'C029'
+      },
+      ProductName: 's',
+      Temperature: {
+        type: 'i',
+        format: (v) => v.toFixed(1)+'C'
+      },
+      Status: 'i',
+      DeviceInstance: 'i',
+      CustomName: 's',
     },
     signals: {
-      Rand: ['i', 'random_number']
     }
   };
 
   // Then we need to create the interface implementation (with actual functions)
   var iface = {
-    SayHello: function() {
-      return 'Hello, world!';
-    },
-    GiveTime: function() {
-      return new Date().toString();
-    },
-    Capitalize: function(str) {
-      return str.toUpperCase();
-    },
-    Flag: true,
-    StringProp: 'initial string',
-    RandValue: 43,
+    Connected: 1,
+    ProductName: 'Virtual device',
+    'Mgmt/Connection': 'Virtual',
+    'Mgmt/ProcessName': 'Virtual device creator',
+    'Mgmt/ProcessVersion': '0.1',
+    ProductId: 0xC029,
+    ProductName: 'Virtual thermometer',
+    Temperature: 0,
+    Status: 0,
+    DeviceInstance: 33,
+    CustomName: '',
     emit: function() {
       // no nothing, as usual
     }
