@@ -59,9 +59,13 @@ async function proceed() {
       Humidity: 'i',
       Pressure: 'd',
       Status: 'd',
-      DeviceInstance: 'i',
+      DeviceInstance: {
+        type: 'i',
+        format: (v) => v.toString()
+      },
       CustomName: 's',
-      BatteryVoltage: 'd'
+      BatteryVoltage: 'd',
+      '/Alarms/LowBattery': 'd',
     },
     signals: {
     }
@@ -84,6 +88,7 @@ async function proceed() {
     DeviceInstance: 33,
     CustomName: '',
     BatteryVoltage: 3.3,
+    '/Alarms/LowBattery': 3.0,
     emit: function() {
       // no nothing, as usual
     }
@@ -110,13 +115,13 @@ async function proceed() {
     { path: '/Settings/Basic2/OptionC', default: 'y' },
     { path: '/Settings/Basic2/OptionD', default: 'y' },
   ]);
-  console.log('settingsResult', JSON.stringify(settingsResult, null, 2));
+  // console.log('settingsResult', JSON.stringify(settingsResult, null, 2));
 
   const removeSettingsResult = await removeSettings([
     { path: '/Settings/Basic2/OptionC' },
     { path: '/Settings/Basic2/OptionD' }
   ]);
-  console.log('removeSettingsResult', JSON.stringify(removeSettingsResult, null, 2));
+  // console.log('removeSettingsResult', JSON.stringify(removeSettingsResult, null, 2));
 
   setInterval(async () => {
 
@@ -138,7 +143,7 @@ async function proceed() {
       interface: 'com.victronenergy.BusItem',
       destination: 'com.victronenergy.settings'
     });
-    console.log('setValueResult', setValueResult);
+    // console.log('setValueResult', setValueResult);
 
     // or get a configuration value
     const getValueReult = await getValue({
@@ -146,7 +151,7 @@ async function proceed() {
       interface: 'com.victronenergy.BusItem',
       destination: 'com.victronenergy.settings'
     });
-    console.log('getValueResult', JSON.stringify(getValueReult, null, 2));
+    // console.log('getValueResult', JSON.stringify(getValueReult, null, 2));
 
   }, 1000);
 
