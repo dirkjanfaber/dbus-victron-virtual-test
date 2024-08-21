@@ -4,7 +4,7 @@ const { addVictronInterfaces } = require('dbus-victron-virtual');
 // example adopted from https://github.com/sidorares/dbus-native/blob/master/examples/basic-service.js
 const serviceName = 'com.victronenergy.temperature.virtual_dfa';
 const interfaceName = serviceName;
-const objectPath = `/${serviceName.replace(/\./g, '/')}`;
+const objectPath = '/';
 
 const sessionBus = dbus.sessionBus();
 if (!sessionBus) {
