@@ -65,7 +65,7 @@ async function proceed() {
       },
       CustomName: 's',
       BatteryVoltage: 'd',
-      '/Alarms/LowBattery': 'd',
+      'Alarms/LowBattery': 'd',
     },
     signals: {
     }
@@ -88,7 +88,7 @@ async function proceed() {
     DeviceInstance: 33,
     CustomName: '',
     BatteryVoltage: 3.3,
-    '/Alarms/LowBattery': 3.0,
+    'Alarms/LowBattery': 0,
     emit: function() {
       // no nothing, as usual
     }
