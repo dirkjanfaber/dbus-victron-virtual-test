@@ -2,7 +2,7 @@ const dbus = require('dbus-native');
 const { addVictronInterfaces } = require('dbus-victron-virtual');
 
 // example adopted from https://github.com/sidorares/dbus-native/blob/master/examples/basic-service.js
-const serviceName = 'com.victronenergy.temperature.virtual_dfa';
+const serviceName = 'com.victronenergy.heatpump.virtual_dfa';
 const interfaceName = serviceName;
 const objectPath = '/';
 
@@ -43,26 +43,38 @@ async function proceed() {
     properties: {
       Connected: 'i',
       ProductName: 's',
-      'Mgmt/Connection': 's',
-      'Mgmt/ProcessName': 's',
-      'Mgmt/ProcessVersion': 's',
       ProductId: {
         type: 'i',
         format: (v) => 'C029'
       },
-      ProductName: 's',
-      Temperature: {
+      'Temperature/OutdoorHeatExchanger': {
         type: 'd',
         format: (v) => v.toFixed(1)+'C'
       },
-      TemperatureType: 'i',
-      Humidity: 'i',
-      Pressure: 'd',
+      'Temperature/IndoorAmbient': {
+        type: 'd',
+        format: (v) => v.toFixed(1)+'C'
+      },
       Status: 'd',
       DeviceInstance: {
         type: 'i',
         format: (v) => v.toString()
       },
+      HumanPresence: 'i',
+      EnergyConsumption: 'i',
+      FanSpeed: 'i',
+      OperationalMode: {
+        type: 'i',
+        format: (v) => ({
+          0: 'auto',
+          1: 'cool',
+          2: 'heat',
+          3: 'dry',
+          4: 'fan',
+          5: 'off'
+        }[v] || 'unknown')
+      },
+      ErrorCode: 'i',
       CustomName: 's',
       BatteryVoltage: 'd',
       'Alarms/LowBattery': 'd',
@@ -74,16 +86,13 @@ async function proceed() {
   // Then we need to create the interface implementation (with actual functions)
   var iface = {
     Connected: 1,
-    ProductName: 'Virtual device',
-    'Mgmt/Connection': 'Virtual',
-    'Mgmt/ProcessName': 'Virtual device creator',
-    'Mgmt/ProcessVersion': '0.1',
-    ProductId: 0xC029,
-    ProductName: 'Virtual thermometer',
-    Temperature: 0,
-    TemperatureType: 2,
-    Humidity: 0,
-    Pressure: 0,
+    'Temperature/OutdoorHeatExchanger': 0,
+    'Temperature/IndoorAmbient': 0,
+    HumanPresence: 0,
+    EnergyConsumption: 0,
+    FanSpeed: 0,
+    ErrorCode: 0,
+    OperationalMode: 0,
     Status: 0,
     DeviceInstance: 33,
     CustomName: '',
@@ -93,7 +102,6 @@ async function proceed() {
       // no nothing, as usual
     }
   };
-
 
   // Now we need to actually export our interface on our object
   sessionBus.exportInterface(iface, objectPath, ifaceDesc);
@@ -108,51 +116,4 @@ async function proceed() {
   } = addVictronInterfaces(sessionBus, ifaceDesc, iface);
 
   console.log('Interface exposed to DBus, ready to receive function calls!');
-
-  const settingsResult = await addSettings([
-    { path: '/Settings/Basic2/OptionA', default: 3, min: 0, max: 5 },
-    { path: '/Settings/Basic2/OptionB', default: 'x' },
-    { path: '/Settings/Basic2/OptionC', default: 'y' },
-    { path: '/Settings/Basic2/OptionD', default: 'y' },
-  ]);
-  // console.log('settingsResult', JSON.stringify(settingsResult, null, 2));
-
-  const removeSettingsResult = await removeSettings([
-    { path: '/Settings/Basic2/OptionC' },
-    { path: '/Settings/Basic2/OptionD' }
-  ]);
-  // console.log('removeSettingsResult', JSON.stringify(removeSettingsResult, null, 2));
-
-  setInterval(async () => {
-
-    // emit a random value (not relevant for our Victron interfaces)
-    var rand = Math.round(Math.random() * 100);
-    if (rand > 75) {
-      iface.emit('Rand', Math.round(Math.random() * 100));
-    }
-
-    // set a random value. By calling emitItemsChanged afterwards, the
-    // Victron-specific signal 'ItemsChanged' will be emitted
-    iface.RandValue = Math.round(Math.random() * 100);
-    emitItemsChanged();
-
-    // change a setting programmatically
-    const setValueResult = await setValue({
-      path: '/Settings/Basic2/OptionB',
-      value: 'changed via SetValue ' + Math.round(Math.random() * 100),
-      interface: 'com.victronenergy.BusItem',
-      destination: 'com.victronenergy.settings'
-    });
-    // console.log('setValueResult', setValueResult);
-
-    // or get a configuration value
-    const getValueReult = await getValue({
-      path: '/Settings/Basic2/OptionB',
-      interface: 'com.victronenergy.BusItem',
-      destination: 'com.victronenergy.settings'
-    });
-    // console.log('getValueResult', JSON.stringify(getValueReult, null, 2));
-
-  }, 1000);
-
 }
